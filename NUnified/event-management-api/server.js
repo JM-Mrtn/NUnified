@@ -93,13 +93,45 @@ const __dirname =
    CORS
 ===================================================== */
 
+/* =====================================================
+   CORS - REACT WEB + FLUTTER WEB
+===================================================== */
+
 const allowedOrigins = [
   process.env.CLIENT_URL,
 
+  // React frontend (local development)
   "http://localhost:5173",
-
   "http://127.0.0.1:5173",
+
+  // Flutter Web (Microsoft Edge)
+  "http://localhost:5500",
+  "http://127.0.0.1:5500",
 ].filter(Boolean);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests without a browser Origin header
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      // Allow configured frontend origins
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      console.log("CORS BLOCKED:", origin);
+
+      return callback(
+        new Error(`CORS blocked origin: ${origin}`)
+      );
+    },
+
+    credentials: true,
+  })
+);
 
 app.use(
   cors({
