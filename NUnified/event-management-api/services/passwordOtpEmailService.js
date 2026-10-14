@@ -1,43 +1,7 @@
-import nodemailer from "nodemailer";
+import { createBrevoTransport } from "./brevoEmailTransport.js";
 
 function createTransporter() {
-  const port =
-    Number(
-      process.env.EMAIL_PORT
-    ) || 465;
-
-  const secure =
-    String(
-      process.env.EMAIL_SECURE
-    ).toLowerCase() ===
-    "true";
-
-  if (
-    !process.env.EMAIL_USER ||
-    !process.env.EMAIL_PASS
-  ) {
-    throw new Error(
-      "EMAIL_USER or EMAIL_PASS is missing from .env"
-    );
-  }
-
-  return nodemailer.createTransport({
-    host:
-      process.env.EMAIL_HOST ||
-      "smtp.gmail.com",
-
-    port,
-
-    secure,
-
-    auth: {
-      user:
-        process.env.EMAIL_USER,
-
-      pass:
-        process.env.EMAIL_PASS,
-    },
-  });
+  return createBrevoTransport();
 }
 
 /* =====================================================

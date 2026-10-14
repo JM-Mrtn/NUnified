@@ -1,55 +1,15 @@
-import nodemailer from "nodemailer";
+import { createBrevoTransport } from "./brevoEmailTransport.js";
 
 /* =====================================================
    EMAIL CONFIGURATION
 ===================================================== */
-
-function getEmailCredentials() {
-  const user =
-    process.env.EMAIL_USER ||
-    process.env.GMAIL_USER ||
-    process.env.SMTP_USER ||
-    process.env.EMAIL_USERNAME ||
-    "";
-
-  const pass =
-    process.env.EMAIL_PASS ||
-    process.env.EMAIL_PASSWORD ||
-    process.env.EMAIL_APP_PASSWORD ||
-    process.env.GMAIL_APP_PASSWORD ||
-    process.env.SMTP_PASS ||
-    "";
-
-  return {
-    user,
-    pass,
-  };
-}
 
 /* =====================================================
    TRANSPORTER
 ===================================================== */
 
 function createTransporter() {
-  const {
-    user,
-    pass,
-  } = getEmailCredentials();
-
-  if (!user || !pass) {
-    throw new Error(
-      "Email credentials are missing from the backend .env file."
-    );
-  }
-
-  return nodemailer.createTransport({
-    service: "gmail",
-
-    auth: {
-      user,
-      pass,
-    },
-  });
+  return createBrevoTransport();
 }
 
 /* =====================================================
@@ -61,9 +21,7 @@ export async function sendForgotPasswordOtp({
   displayName,
   otp,
 }) {
-  const {
-    user,
-  } = getEmailCredentials();
+  const user = process.env.EMAIL_FROM_ADDRESS || process.env.EMAIL_USER;
 
   if (!to) {
     throw new Error(
